@@ -42,8 +42,10 @@ Follow these steps to set up the environment, handle dependencies, and run the a
 | **1** | **Clean Port 8000** | `sudo fuser -k 8000/tcp` |
 | **2** | **Clear Containers** | `docker stop $(docker ps -aq) && docker rm $(docker ps -aq)` |
 | **3** | **Build & Tag** | `docker build -t laxmangodi/django-devops-app:v1 .` |
-| **4** | **Push to Hub** | `docker push laxmangodi/django-devops-app:v1` |
-| **5** | **Run (Detached)** | `docker run -d -p 8000:8000 --name web-app laxmangodi/django-devops-app:v1` |
+| **4** | **Sync Database** | `docker exec -it web-app python3 manage.py migrate` |
+| **5** | **Create Admin** | `docker exec -it django-app python3 manage.py createsuperuser` |
+| **6** | **Push to Hub** | `docker push laxmangodi/django-devops-app:v1` |
+| **7** | **Run (Detached)** | `docker run -d -p 8000:8000 --name web-app laxmangodi/django-devops-app:v1` |
 
 ---
 
