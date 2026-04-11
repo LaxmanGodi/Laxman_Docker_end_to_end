@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV /home/laxman/Laxman_Docker_end_to_end/.venv
+set -gx VIRTUAL_ENV /home/ubuntu/Laxman_Docker_end_to_end/.venv
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/"bin $PATH
