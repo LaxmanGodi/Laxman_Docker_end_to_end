@@ -1,65 +1,58 @@
-Project Documentation: DevOps & SDET Automation
-Prepared by: Laxman, Automation Test Engineer
+# 🚀 Django DevOps & Automation Project
+**Author:** Laxman | **Role:** SDET / Automation Test Engineer | **Location:** Bengaluru, India
 
-Location: Bengaluru, India
+This repository contains a containerized Django application deployed on AWS EC2. It serves as a portfolio piece to demonstrate proficiency in **CI/CD pipelines**, **Dockerization**, and **Environment Management**.
 
-Date: April 2026
+---
 
-1. Project Overview
-This project serves as a professional demonstration of integrating Django web development with modern DevOps practices. It covers the full lifecycle of an application, from local development in a virtual environment to containerization using Docker on a cloud-based EC2 instance.
+## 🛠 Command Reference Guide
+Use these commands to manage the environment and run the application.
 
-Primary Focus: SDET, Automation Frameworks, and Robotics Software Validation.
+### 1. Environment Setup (Local/EC2)
+| Task | Command |
+| :--- | :--- |
+| **Create Virtual Env** | `python3 -m venv .venv` |
+| **Activate Env** | `source .venv/bin/activate` |
+| **Install Dependencies** | `pip install -r requirements.txt` |
+| **Reset Environment** | `rm -rf .venv && python3 -m venv .venv` |
 
-Infrastructure: AWS EC2 (Ubuntu 22.04).
+### 2. Django Development
+| Task | Command |
+| :--- | :--- |
+| **Apply Database Changes** | `python3 manage.py migrate` |
+| **Create Admin Account** | `python3 manage.py createsuperuser` |
+| **Run Dev Server (Local)** | `python3 manage.py runserver` |
+| **Run Dev Server (Cloud)** | `python3 manage.py runserver 0.0.0.0:8000` |
 
-Key Technologies: Python, Django, Docker, Bash, and Linux Administration.
+### 3. Docker Operations
+| Task | Command |
+| :--- | :--- |
+| **Build Docker Image** | `docker build -t django-devops-app .` |
+| **Run Container** | `docker run -p 8000:8000 django-devops-app` |
+| **Stop All Containers** | `docker stop $(docker ps -q)` |
 
-2. Command Reference Guide
-Environment & Setup
-Action	Command
-Activate Virtual Env	source venv1/bin/activate
-Install Django	pip install django
-Upgrade Pip	pip install --upgrade pip
-Django Operations
-Action	Command
-Database Migration	python3 manage.py migrate
-Create Superuser	python3 manage.py createsuperuser
-Run Server (Public)	python3 manage.py runserver 0.0.0.0:8000
-Kill Port 8000	fuser -k 8000/tcp
-Docker Operations
-Action	Command
-Build Image	docker build -t devops-app .
-Run Container	docker run -p 8000:8000 devops-app
-List Containers	docker ps -a
-3. Dockerfile Architecture
-The project utilizes a custom Ubuntu-based Dockerfile designed for maximum control over the environment.
+---
 
-Base Image: ubuntu:22.04
+## 🏗 Project Architecture
 
-Layering: System tools are installed first, followed by the project code to optimize build caching.
 
-Entrypoint: Uses a bash script to ensure venv1 is activated for every command execution.
+1. **Frontend:** Custom HTML/CSS landing page highlighting SDET skills.
+2. **Backend:** Django 5.x Framework.
+3. **Database:** SQLite (Container-native).
+4. **Deployment:** Dockerized Ubuntu 22.04 environment.
 
-Port Mapping: Exposed on 8000 for external accessibility.
+## 📁 Key File Descriptions
+* `manage.py`: Entry point for Django administrative commands.
+* `Dockerfile`: Instructions for building the automated environment.
+* `requirements.txt`: List of all Python dependencies.
+* `.gitignore`: Prevents sensitive files (like `.venv` and `db.sqlite3`) from being uploaded to GitHub.
 
-4. Troubleshooting & Best Practices
-Common Issues
-Connection Timed Out: Ensure the AWS Security Group allows Inbound TCP traffic on Port 8000.
+---
 
-Permission Denied: Use ls -l to check file ownership. If files are owned by root, use sudo chown to regain control.
+## ⚠️ Troubleshooting
+* **404 Page Not Found:** Ensure you have configured `path('', include('demo.urls'))` in `devops/urls.py`.
+* **Port Already in Use:** If Port 8000 is stuck, run `fuser -k 8000/tcp` to clear it.
+* **Externally Managed Environment:** This is a Linux safety feature; always activate the `.venv` before running `pip`.
 
-Vim Editing: If backspace/arrows fail in vi, install the full version using sudo apt install vim.
-
-Maintenance Tips
-Always use a virtual environment (venv) to avoid corrupting system-level Python packages.
-
-Always keep ALLOWED_HOSTS updated in settings.py when changing instance IPs.
-
-Always document new changes in the README.md for team collaboration.
-
-5. Author Contact Information
-Role: Automation Test Engineer / SDET
-
-Expertise: Selenium, Java, REST Assured, NVIDIA Isaac Sim, Docker.
-
-GitHub/LinkedIn: [Insert your profile links here]
+---
+*Developed for the purpose of demonstrating Robotics Software Validation and Automation workflows.*
