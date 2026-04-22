@@ -1,0 +1,13 @@
+# sample-python-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: sample-python-app
+spec:
+  selector:
+    app: python-app # CRITICAL: This must match your Deployment's labels!
+  ports:
+    - name: https-port
+      protocol: TCP
+      port: 443        # Port Ingress looks for
+      targetPort: 443  # Port the Python app listens on inside the container

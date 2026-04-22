@@ -1,0 +1,33 @@
+# --- KUBERNETES INGRESS CONFIGURATION (v1.22+ Standard) ---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-host-example
+  annotations:
+    # We keep the rewrite-target as it is a specific feature of Nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  # This replaces the deprecated kubernetes.io/ingress.class annotation
+  ingressClassName: nginx 
+  rules:
+  - host: "laxman.godi.com"
+    http:
+      paths:
+      - pathType: ImplementationSpecific
+        path: "/"
+        backend:
+          service:
+            name: sample-python-app
+            port:
+              number: 80
+
+  - host: "*.laxman.com"
+    http:
+      paths:
+      - pathType: ImplementationSpecific
+        path: "/laxman"
+        backend:
+          service:
+            name: sample-python-app
+            port:
+              number: 80

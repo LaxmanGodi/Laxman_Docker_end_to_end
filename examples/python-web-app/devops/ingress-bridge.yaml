@@ -1,0 +1,50 @@
+# --- PHASE 2: SSL BRIDGE (RE-ENCRYPTION) ---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-ssl-bridge
+  annotations:
+    # 1. ENCRYPTION BRIDGE: This tells Nginx that the communication 
+    # between the Ingress and your Python Pod must also be over HTTPS.
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+
+    # 2. SKIP VERIFICATION: Since we generated our own certificates (self-signed)
+    # inside the Pod, Nginx won't recognize the "Authority." We set this to "off"
+    # so Nginx trusts the Pod's encryption anyway.
+    nginx.ingress.kubernetes.io/proxy-ssl-verify: "off"
+
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts: 
+    - "*.laxman.com"
+    - "laxman.com"
+    - "laxman.godi.com"    # Added: Tells Nginx to use your SSL secret for this domain
+    secretName: laxman-tls-offload
+
+  rules:
+  # RULE 1: Routing for your original subdomain
+  - host: "poornima.laxman.com"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: sample-python-app
+            port:
+              number: 443 
+
+  # RULE 2: Routing for the new domain that was giving a 404
+  # Without this block, Nginx reaches the cluster but doesn't know which 
+  # service handles "laxman.godi.com" traffic.
+  - host: "laxman.godi.com"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: sample-python-app # Sending traffic to the same Python app
+            port:
+              number: 443

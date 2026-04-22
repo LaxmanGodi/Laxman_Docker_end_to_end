@@ -1,0 +1,49 @@
+# --- PHASE 1: SSL OFFLOADING (WILDCARD & BASE DOMAIN) ---
+# This file handles the "Security Gate" logic for multiple domains.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-ssl-offload
+  annotations:
+    # 1. Force HTTP to HTTPS redirection for all incoming traffic
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    
+    # 2. Increase proxy buffers (good practice for stability)
+    nginx.ingress.kubernetes.io/proxy-body-size: "8m"
+spec:
+  # Tells Minikube to use the NGINX Controller
+  ingressClassName: nginx
+  
+  # --- THE IDENTITY (TLS) ---
+  tls:
+  - hosts:
+      - "laxman.com"   # The root domain
+      - "*.laxman.com" # All subdomains (poornima, dev, test, etc.)
+    # The Secret name we created with the wildcard certificate
+    secretName: laxman-tls-offload
+    
+  # --- THE ROUTING RULES ---
+  rules:
+  # RULE A: Match the base domain exactly
+  - host: "laxman.com"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: sample-python-app
+            port:
+              number: 80 # Decrypted traffic sent to app port 80
+
+  # RULE B: Match any subdomain ending in .laxman.com
+  - host: "*.laxman.com"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: sample-python-app
+            port:
+              number: 80

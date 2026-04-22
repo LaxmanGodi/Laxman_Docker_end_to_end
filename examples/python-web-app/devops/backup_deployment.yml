@@ -1,0 +1,68 @@
+# --- SERVICE SECTION ---
+# The Service acts as a stable entry point for your pods.
+apiVersion: v1
+kind: Service
+metadata:
+  name: sample-python-app
+spec:
+  selector:
+    # Must match the labels defined in the Deployment template below
+    app: sample-python-app
+  ports:
+    - protocol: TCP
+      # 'port' 443 is used because TLS-Bridge expects an HTTPS connection string
+      port: 443
+      # 'targetPort' 8443 is the SSL-enabled port inside the Django container
+      targetPort: 8443
+
+---
+
+# --- DEPLOYMENT SECTION ---
+# This defines the desired state: 3 replicas running an SSL-aware Django app.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-python-app
+spec:
+  # 3 replicas for high availability
+  replicas: 3
+  selector:
+    matchLabels:
+      app: sample-python-app
+  template:
+    metadata:
+      labels:
+        app: sample-python-app
+    spec:
+      containers:
+      - name: python-app
+        # Ensure you have rebuilt this image with django-extensions installed
+        image: laxmangodi/sample-python-app:latest
+        # 2. Change 'Never' to 'Always' so it pulls from Docker Hub
+        imagePullPolicy: Always
+        workingDir: /app
+        ports:
+        - name: https
+          containerPort: 8443
+        
+        # --- TLS BRIDGE STARTUP LOGIC ---
+        # We use runserver_plus to handle the SSL handshake between Ingress and Pod.
+        # It generates 'adhoc' certificates on the fly in /tmp.
+        command: ["python3"]
+        args: 
+          - "manage.py"
+          - "runserver_plus"
+          - "--cert-file"
+          - "/tmp/cert.crt"
+          - "--key-file"
+          - "/tmp/cert.key"
+          - "0.0.0.0:8443"
+        
+        # Resource limits help prevent one pod from consuming all Minikube resources
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "256Mi"

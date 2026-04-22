@@ -1,0 +1,44 @@
+# --- DEPLOYMENT SECTION ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-python-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: sample-python-app
+  template:
+    metadata:
+      labels:
+        app: sample-python-app
+    spec:
+      containers:
+      - name: python-app
+        image: laxmangodi/sample-python-app:latest
+        imagePullPolicy: Always
+        workingDir: /app
+        ports:
+        - name: https
+          containerPort: 8443
+        
+        # --- STARTUP COMMAND ---
+        # Forces Django to use the mounted wildcard certificates 
+        # instead of defaulting to a 'localhost' dummy cert.
+        command: ["python", "manage.py"]
+        args: [
+          "runserver_plus", 
+          "0.0.0.0:8443", 
+          "--cert-file", "/etc/ssl/certs/tls.crt", 
+          "--key-file", "/etc/ssl/certs/tls.key"
+        ]
+
+        volumeMounts:
+        - name: cert-volume
+          mountPath: "/etc/ssl/certs"
+          readOnly: true
+
+      volumes:
+      - name: cert-volume
+        secret:
+          secretName: laxman-tls-offload

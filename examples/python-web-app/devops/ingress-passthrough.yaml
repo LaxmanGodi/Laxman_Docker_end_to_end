@@ -1,0 +1,35 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-tls-passthrough
+  annotations:
+    # 1. THE SWITCH: Tells Nginx to just tunnel the TCP packets
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    
+    # 2. NO VERIFY: Since Nginx isn't decrypting, it doesn't need to check 
+    # the backend protocol anymore.
+spec:
+  ingressClassName: nginx
+  # Note: The 'tls:' block is often removed or left for SNI hinting.
+  # But the important part is the rules.
+  rules:
+  - host: "poornima.laxman.com"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: sample-python-app
+            port:
+              number: 443
+  - host: "laxman.godi.com"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: sample-python-app
+            port:
+              number: 443
