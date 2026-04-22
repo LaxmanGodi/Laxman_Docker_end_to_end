@@ -1,0 +1,36 @@
+# --- SECURITY (CRITICAL) ---
+# Never commit your actual private keys or certificates
+*.key
+*.crt
+*.pem
+*.p12
+
+# --- PYTHON / DJANGO ---
+# Ignore environment and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+db.sqlite3
+media
+venv/
+env/
+
+# --- TERRAFORM (Since you are upskilling here) ---
+# Ignore local state and provider binaries
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+.terraform.lock.hcl
+
+# --- KUBERNETES / OS ---
+# Ignore local minikube or system configs
+.kube/
+.DS_Store
+Thumbs.db
+
+# --- DOCKER ---
+# Ignore local build logs
+*.log
+docker-compose.override.yml
