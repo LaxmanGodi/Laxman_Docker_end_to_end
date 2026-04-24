@@ -1,11 +1,13 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: environment-developer-role
+  name: environment-viewer-role
 rules:
+  # Viewer can see resources but cannot create, update, or delete them
   - apiGroups: ["", "apps", "batch"]
     resources: ["pods", "deployments", "services", "jobs", "pods/log"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+    verbs: ["get", "list", "watch"] 
+  
   - apiGroups: [""]
     resources: ["configmaps"]
     verbs: ["get", "list"]

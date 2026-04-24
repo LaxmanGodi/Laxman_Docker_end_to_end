@@ -1,0 +1,37 @@
+---
+- name: Automate IAM User Creation for Environments
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Create IAM Users for SDET/DevOps Lifecycle
+      amazon.aws.iam_user:
+        # These are the 4 users for your different environments
+        name: "{{ item }}"
+        state: present
+      loop:
+        - dev-user
+        - staging-user
+        - uat-user
+        - prod-user
+
+    - name: Attach ReadOnly Policy to Users (Example Permission)
+      amazon.aws.iam_user_policy:
+        user_name: "{{ item }}"
+        policy_name: "ReadOnlyAccess"
+        state: present
+        policy_json: |
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": "ec2:Describe*",
+                "Resource": "*"
+              }
+            ]
+          }
+      loop:
+        - dev-user
+        - staging-user
+        - uat-user
+        - prod-user

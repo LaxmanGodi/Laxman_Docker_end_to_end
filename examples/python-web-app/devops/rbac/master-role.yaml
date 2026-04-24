@@ -1,0 +1,14 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: environment-developer-role
+rules:
+  # Core permissions for daily SDET/Dev operations
+  - apiGroups: ["", "apps", "batch"]
+    resources: ["pods", "deployments", "services", "jobs", "pods/log"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  
+  # Read-only access to configurations
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list"]

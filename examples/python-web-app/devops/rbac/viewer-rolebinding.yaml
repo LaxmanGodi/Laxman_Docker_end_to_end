@@ -1,0 +1,17 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: env-viewer-binding
+  namespace: python-app-dev # Or create a python-app-prod namespace
+subjects:
+  - kind: User
+    name: "uat-user"
+    apiGroup: rbac.authorization.k8s.io
+  
+  - kind: User
+    name: "prod-user"
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: environment-viewer-role # Links to the Viewer Role above
+  apiGroup: rbac.authorization.k8s.io

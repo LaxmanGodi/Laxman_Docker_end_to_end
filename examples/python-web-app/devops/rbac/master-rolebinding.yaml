@@ -1,0 +1,20 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: env-multi-user-binding
+  namespace: python-app-dev # You can duplicate this file for staging/prod namespaces
+subjects:
+  # Mapping our Ansible-created IAM users to K8s
+  - kind: User
+    name: "dev-user"
+    apiGroup: rbac.authorization.k8s.io
+  
+  - kind: User
+    name: "staging-user"
+    apiGroup: rbac.authorization.k8s.io
+
+
+roleRef:
+  kind: ClusterRole
+  name: environment-developer-role # Linking to the Master Role above
+  apiGroup: rbac.authorization.k8s.io
