@@ -1,0 +1,46 @@
+# The Worker: Custom Controller (Logic)
+# The YAML files above are just "data." 
+# The Controller is actual script that watches for new "DB" requests and performs the heavy lifting (like creating actual Pods or cloud resources).
+
+######################################################################################################################
+
+
+import kopf # The framework that handles the 'Watch' loop for us
+
+# ---------------------------------------------------------
+# HANDLER: ON CREATE
+# This triggers when a user runs 'kubectl apply' on a NEW Database object
+# ---------------------------------------------------------
+@kopf.on.create('stable.example.com', 'v1', 'databases')
+def create_my_db(spec, name, namespace, logger, **kwargs):
+    # 'spec' contains the values from the YAML (engine, storageGb, etc.)
+    engine = spec.get('engine')
+    size = spec.get('storageGb')
+
+    # Logger prints to the terminal running the controller
+    logger.info(f"Automation Start: Deploying {engine} for {name} in {namespace}")
+
+    # --- REAL DEVOPS WORK HAPPENS HERE ---
+    # Example: os.system(f"helm install {name} bitnami/{engine}")
+    # For now, we simulate the action with a print statement
+    print(f"--- [ACTION] Allocating {size}GB of storage ---")
+
+    # Whatever this function returns is automatically saved into the
+    # 'status' field of the Database object in Kubernetes.
+    return {
+        'phase': 'Running',
+        'message': f'Successfully deployed {engine}',
+        'managed-by': 'Laxman-Controller'
+    }
+
+# ---------------------------------------------------------
+# HANDLER: ON DELETE
+# This triggers when 'kubectl delete db <name>' is executed
+# ---------------------------------------------------------
+@kopf.on.delete('stable.example.com', 'v1', 'databases')
+def delete_my_db(name, logger, **kwargs):
+    logger.info(f"Automation Cleanup: Removing resources for {name}")
+
+    # --- REAL DEVOPS WORK HAPPENS HERE ---
+    # Example: Delete S3 buckets, remove DNS entries, etc.
+    print(f"--- [ACTION] Deallocating storage for {name} ---")

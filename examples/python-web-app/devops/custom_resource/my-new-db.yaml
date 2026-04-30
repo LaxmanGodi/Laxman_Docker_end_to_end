@@ -1,0 +1,27 @@
+# The Order Form: Custom Resource (CR)
+# Once the blueprint is applied, a user (or a developer) can now request a specific database instance using simple YAML.
+
+###############################################################################################################
+
+# We use the group and version we defined in the CRD above
+#
+# API version and Kind as defined in your Go project's Scheme
+apiVersion: laxmangodi.com/v1
+kind: Database
+metadata:
+  name: laxman-fresh-db
+  namespace: default
+  # --- INDUSTRY ADDITION: Labels & Annotations ---
+  # Allows for easier filtering (e.g., kubectl get db -l app=ecommerce)
+  labels:
+    app.kubernetes.io/name: inventory
+    app.kubernetes.io/managed-by: database-operator
+    env: production
+  annotations:
+    # Documentation for other DevOps engineers
+    description: "Main postgres instance for the inventory microservice"
+spec:
+  # These values map directly to your Go 'DatabaseSpec' struct
+  engine: "postgres"
+  version: "13"
+  storageGb: 20 # Optimized for your local Minikube environment

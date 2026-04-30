@@ -1,0 +1,12 @@
+# The Order Form: Custom Resource (CR)
+# Once the blueprint is applied, a user (or a developer) can now request a specific database instance using simple YAML.
+
+apiVersion: stable.example.com/v1
+kind: Database
+metadata:
+  name: inventory-db
+spec:
+  # These fields match the schema we defined in the CRD above
+  engine: "postgres"
+  version: "13"
+  storageGb: 50

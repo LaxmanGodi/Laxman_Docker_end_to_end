@@ -1,0 +1,65 @@
+# The Blueprint: Custom Resource Definition (CRD)                                                                                                    
+# This script tells Kubernetes, "Hey, I am introducing a new type of object called a Database." Without this, Kubernetes won't understand your custom commands.
+
+############################################################################################################
+
+
+# API version for defining extensions to K8s
+
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: databases.laxmangodi.com
+spec:
+  group: laxmangodi.com
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      # --- ADDITION 1: STATUS SUBRESOURCE ---
+      # This is crucial for controller-runtime performance
+      subresources:
+        status: {}
+
+      # --- ADDITION 2: PRINTER COLUMNS ---
+      # Customizes what you see when you type 'kubectl get db'
+      additionalPrinterColumns:
+        - name: Engine
+          type: string
+          jsonPath: .spec.engine
+        - name: Storage
+          type: integer
+          jsonPath: .spec.storageGb
+        - name: Status
+          type: string
+          jsonPath: .status.phase
+
+      schema:
+        openAPIV3Schema:
+          type: object
+          # --- ADDITION 3: VALIDATION ---
+          required: ["spec"]
+          properties:
+            spec:
+              type: object
+              required: ["engine", "storageGb"] # Engine and Storage must be provided
+              properties:
+                engine:
+                  type: string
+                  enum: ["mysql", "postgres", "mongodb"] # Industry tip: Limit choices
+                version: {type: string}
+                storageGb:
+                  type: integer
+                  minimum: 1 # Prevent 0GB or negative storage
+                  maximum: 100
+            status:
+              type: object
+              properties:
+                phase: {type: string} # e.g., Pending, Running, Failed
+                lastUpdated: {type: string, format: date-time}
+  scope: Namespaced
+  names:
+    plural: databases
+    singular: database
+    kind: Database
+    shortNames: [db]
