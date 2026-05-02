@@ -1,0 +1,14 @@
+apiVersion: app.example.com/v1
+kind: MyApp
+metadata:
+  # This name must be unique within the namespace
+  name: myapp-sample
+  labels:
+    app.kubernetes.io/name: myapp
+    app.kubernetes.io/part-of: custom-operator
+spec:
+  # The desired number of replicas (your Reconcile logic uses this)
+  size: 3
+  
+  # Optional: If you added an image field to your struct, include it here
+  # image: "laxmangodi/python-web-app:v1"
